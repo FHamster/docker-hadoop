@@ -1,6 +1,6 @@
-FROM bde2020/hadoop-base:2.0.0-hadoop3.2.1-java8
+FROM fhamster/hadoop-base:hadoop3.2.1-java8-0.1
 
-MAINTAINER Ivan Ermilov <ivan.s.ermilov@gmail.com>
+MAINTAINER GaoXin <gaoxin459716010@163.com>
 
 HEALTHCHECK CMD curl -f http://localhost:8188/ || exit 1
 
