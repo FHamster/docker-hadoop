@@ -3,7 +3,6 @@ version: "3"
 services:
   proxy:
     image: nginx
-    #    build: ./datanode_nginx
     restart: always
     container_name: nginx_proxy
     volumes:
@@ -13,13 +12,13 @@ services:
     networks:
       hadoopnet:
         ipv4_address: 172.28.0.2
+
   namenode:
     hostname: namenode
-    build: ./namenode
-#    image: fhamster/hadoop-namenode:hadoop3.2.1-java8-0.1
-#    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+#    build: ./namenode/namenode_spark
+    image: fhamster/hadoop-namenode:hadoop3.2.1-java8-0.1
     container_name: namenode
-#    restart: always
+    restart: always
     ports:
       - 9870:9870
       - 9000:9000
@@ -35,8 +34,7 @@ services:
         ipv4_address: 172.28.0.3
   datanode1:
     hostname: datanode1
-#    build: ./datanode
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    image: fhamster/hadoop-datanode:hadoop3.2.1-java8-0.1
     container_name: datanode1
     restart: always
     depends_on:
@@ -53,8 +51,7 @@ services:
 
   datanode2:
     hostname: datanode2
-#    build: ./datanode
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    image: fhamster/hadoop-datanode:hadoop3.2.1-java8-0.1
     container_name: datanode2
     restart: always
     depends_on:
@@ -71,8 +68,7 @@ services:
 
   datanode3:
     hostname: datanode3
-#    build: ./datanode
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    image: fhamster/hadoop-datanode:hadoop3.2.1-java8-0.1
     container_name: datanode3
     restart: always
     depends_on:
@@ -87,70 +83,6 @@ services:
       hadoopnet:
         ipv4_address: 172.28.0.6
 
-  resourcemanager:
-    hostname: resourcemanager
-#    build: ./resourcemanager
-    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
-    container_name: resourcemanager
-    restart: always
-    depends_on:
-      - namenode
-      - datanode1
-      - datanode2
-      - datanode3
-    ports:
-    - 8088:8088
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode1:9864 datanode2:9864 datanode3:9864"
-    env_file:
-      - ./hadoop.env
-    networks:
-      hadoopnet:
-        ipv4_address: 172.28.0.7
-
-  nodemanager:
-    hostname: nodemanager
-#    build: ./nodemanager
-    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
-    container_name: nodemanager
-    restart: always
-    ports:
-    - 8042:8042
-    depends_on:
-      - namenode
-      - datanode1
-      - datanode2
-      - datanode3
-      - resourcemanager
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode1:9864 datanode2:9864 datanode3:9864 resourcemanager:8088"
-    env_file:
-      - ./hadoop.env
-    networks:
-      hadoopnet:
-        ipv4_address: 172.28.0.8
-  historyserver:
-    hostname: historyserver
-#    build: ./historyserver
-    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
-    container_name: historyserver
-    restart: always
-    depends_on:
-      - namenode
-      - datanode1
-      - datanode2
-      - datanode3
-    ports:
-    - 8188:8188
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode1:9864 datanode2:9864 datanode3:9864 resourcemanager:8088"
-    volumes:
-      - hadoop_historyserver:/hadoop/yarn/timeline
-    env_file:
-      - ./hadoop.env
-    networks:
-      hadoopnet:
-        ipv4_address: 172.28.0.9
 volumes:
   hadoop_namenode:
 #  hadoop_datanode:
